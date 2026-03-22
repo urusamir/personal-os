@@ -61,7 +61,7 @@ const ChatInterface = () => {
     setSelectedMsgIds(new Set());
   };
 
-  const loadHistory = async () => {
+  const loadHistory = async (autoLoadFirst = false) => {
     const { data, error } = await supabase
       .from('chat_threads')
       .select('*')
@@ -69,11 +69,15 @@ const ChatInterface = () => {
     
     if (!error && data) {
       setHistory(data);
+      // Auto-select the most recent thread so sidebar + chat panel are in sync
+      if (autoLoadFirst && data.length > 0) {
+        loadChat(data[0]);
+      }
     }
   };
 
   useEffect(() => {
-    loadHistory();
+    loadHistory(true); // auto-select most recent thread on mount
     axios.get('https://openrouter.ai/api/v1/models').then(res => {
       if (res.data && res.data.data) {
         const models = res.data.data.sort((a: any, b: any) => a.name.localeCompare(b.name));

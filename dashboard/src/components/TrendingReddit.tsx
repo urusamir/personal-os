@@ -63,21 +63,17 @@ const TrendingReddit = () => {
     // ── Step 1: Trigger the scraper Edge Function ──
     const scrapeToast = toast.loading('🔍 Scraping Reddit for fresh ideas…');
     try {
-      const edgeFnUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/scrape-reddit`;
-      const res = await fetch(edgeFnUrl, {
+      const { data: fnResult, error: fnError } = await supabase.functions.invoke('scrape-reddit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-        }
       });
-      const result = await res.json();
-      if (result.success) {
-        toast.success(`✅ Scraped ${result.scraped} fresh posts from ${result.subreddits.join(', ')}`, {
+      if (fnError) {
+        toast.error('Scraper error: ' + fnError.message, { id: scrapeToast, duration: 4000 });
+      } else if (fnResult?.success) {
+        toast.success(`✅ Scraped ${fnResult.scraped} fresh posts from ${fnResult.subreddits?.join(', ')}`, {
           id: scrapeToast, duration: 4000
         });
       } else {
-        toast.error('Scrape had issues: ' + (result.error || 'unknown'), { id: scrapeToast });
+        toast('ℹ️ Scraper ran but returned no new posts.', { id: scrapeToast, duration: 3000 });
       }
     } catch (err: any) {
       toast.error('Scraper call failed: ' + err.message, { id: scrapeToast, duration: 4000 });
