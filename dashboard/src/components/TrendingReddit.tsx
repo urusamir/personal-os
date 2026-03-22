@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Bookmark, ExternalLink, Heart, MessageSquare, RefreshCw, CalendarDays } from 'lucide-react';
 import toast from 'react-hot-toast';

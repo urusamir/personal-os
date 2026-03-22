@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { ExternalLink, Trash2, X } from 'lucide-react';
+import { Trash2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
